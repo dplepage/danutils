@@ -1,1 +1,6 @@
 *.pyc
+sci/ValDer/build/*
+*.so
+*.o
+.DS_Store
+sci/ValDer/ValDer.cpp
