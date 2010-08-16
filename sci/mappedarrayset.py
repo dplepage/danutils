@@ -3,7 +3,6 @@ import os
 import numpy as np
 import yaml
 
-
 class MappedArraySet(object):
     """Wraps a collection of named arrays stored as memory-mapped files."""
     def __init__(self, dirname, readonly=False):

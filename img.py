@@ -6,6 +6,9 @@ import numpy as np
 
 from danutils.misc import batchby
 
+def imread(fname, mode='RGB'):
+    return np.asarray(Image.open(fname).convert(mode))/255.0
+
 def floatToImg(M):
     """
     Take a floating point image array with values between 0 and 1 and convert it
