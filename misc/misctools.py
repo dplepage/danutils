@@ -16,6 +16,7 @@ def deprecated(func):
     return newFunc
     
 def cachedproperty(f):
+    '''Property that caches the value of an input function'''
     name = f.__name__
     def getter(self):
         try:
@@ -28,6 +29,8 @@ def cachedproperty(f):
 @contextmanager
 def replacing(ob,**kwargs):
     """
+    Context Manager that replaces parameters of an object
+    and restores them upon completion.
     example:
     
     >>> class f: x = 15
@@ -89,3 +92,9 @@ class memoize:
     except KeyError:
       self.memoized[(args,`kwargs`)] = self.function(*args,**kwargs)
       return self.memoized[(args,`kwargs`)]
+
+class dummy:
+    def __init__(self, **kwargs):
+        for key,val in kwargs.iteritems():
+            setattr(self, key, val)
+
