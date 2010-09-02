@@ -120,9 +120,11 @@ def nextdir(root, pattern='run{0}'):
     candidates = glob.glob(os.path.join(root,"*"))
     # This is not the most efficient way to do this.
     # But it is very flexible!
+    print candidates
     for i in count(0):
-        if './'+pattern.format(i) not in candidates:
-            return os.path.join(root,pattern.format(i))
+        tgt = os.path.join(root,pattern.format(i))
+        if tgt not in candidates:
+            return tgt
     
 
 
