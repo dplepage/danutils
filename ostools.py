@@ -122,7 +122,7 @@ def nextdir(root, pattern='run{0}'):
     # But it is very flexible!
     for i in count(0):
         if './'+pattern.format(i) not in candidates:
-            return pattern.format(i)
+            return os.path.join(root,pattern.format(i))
     
 
 
