@@ -4,6 +4,7 @@ from __future__ import with_statement # In case of 2.5
 import os
 import os.path
 import glob
+from itertools import count
 
 def ensurefile(pth):
     """Make every directory needed to contain the specified file path.
@@ -120,7 +121,7 @@ def nextdir(root, pattern='run{0}'):
     # This is not the most efficient way to do this.
     # But it is very flexible!
     for i in count(0):
-        if pattern.format(i) not in candidates:
+        if './'+pattern.format(i) not in candidates:
             return pattern.format(i)
     
 
