@@ -3,6 +3,7 @@
 from __future__ import with_statement # In case of 2.5
 import os
 import os.path
+import glob
 
 def ensurefile(pth):
     """Make every directory needed to contain the specified file path.
@@ -113,6 +114,15 @@ class chdir(object):
         self._cwd = self._pwd
 
 
+def nextdir(root, pattern='run{0}'):
+    '''Generate a new, unique directory name in root based on pattern'''
+    candidates = glob.glob(os.path.join(root,"*"))
+    # This is not the most efficient way to do this.
+    # But it is very flexible!
+    for i in count(0):
+        if pattern.format(i) not in candidates:
+            return pattern.format(i)
+    
 
 
 if __name__ == '__main__':
