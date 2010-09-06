@@ -31,7 +31,8 @@ def setprintsize():
     cols, rows = terminal_size()
     numpy.set_printoptions(linewidth = cols)
 
-def setup_sci():
+def set_scipy_defaults():
+    '''My preferred scipy print options'''
     cols, rows = terminal_size()
     numpy.set_printoptions(precision=3, linewidth = cols, threshold=32*32)
     
