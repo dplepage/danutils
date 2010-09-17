@@ -4,7 +4,10 @@ from __future__ import with_statement # In case of 2.5
 import os
 import os.path
 import glob
+import tempfile
+import shutil
 from itertools import count
+import contextlib
 
 def ensurefile(pth):
     """Make every directory needed to contain the specified file path.
@@ -120,12 +123,32 @@ def nextdir(root, pattern='run{0}'):
     candidates = glob.glob(os.path.join(root,"*"))
     # This is not the most efficient way to do this.
     # But it is very flexible!
+    # FIXME add tests
     print candidates
     for i in count(0):
         tgt = os.path.join(root,pattern.format(i))
         if tgt not in candidates:
             return tgt
     
+@contextlib.contextmanager
+def tmpdir():
+    """
+    A context manager that creates a temporary directory and deletes it on exit
+
+    >>> with tmpdir() as d:
+    ...     print os.path.exists(d)
+    ... 
+    True
+    >>> print os.path.exists(d)
+    False
+    """
+    dir = None
+    try:
+        dir = tempfile.mkdtemp()
+        yield dir
+    finally:
+        if dir:
+            shutil.rmtree(dir)
 
 
 if __name__ == '__main__':
