@@ -61,7 +61,8 @@ def imagedb(image, title = None, frame = None, fields = None, flip = 1, **kwargs
     f = fields if fields is not None else field_types[d]
     t = title if title is not None else "Untitled"
     fr = frame if frame is not None else ""
-    format_string = ("h={h} w={w} b={b} f={f} t='{t}' fr={fr} flip={flip} "
+    format_string = ("h={h} w={w} b={b} f={f} t='{t}' fr={fr} "
                      "pg={imagedb_prog}").format(**locals()) 
     format_string += ' '.join(["{0}={1}".format(k,v) for k,v in kwargs.iteritems()])
+    if flip: format_string += " flip"
     imagedb_so.imagedb_wrap(image.copy().ctypes.data, format_string)
