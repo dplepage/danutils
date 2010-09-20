@@ -52,7 +52,7 @@ def replacedict(d,**kwargs):
     d.update(kwargs)
     yield d
     for k in kwargs.keys():
-        if d[k] is NO_ATTR:
+        if old[k] is NO_ATTR:
             del d[k]
         else: d[k] = old[k]
 
