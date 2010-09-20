@@ -4,3 +4,5 @@ sci/ValDer/build/*
 *.o
 .DS_Store
 sci/ValDer/ValDer.cpp
+img/imagedb/imagedb
+img/imagedb/tester

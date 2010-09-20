@@ -1,0 +1,25 @@
+CCFLAGS=-g -Wall -O2 
+
+CCFILES=main.cc server.cc io.cc
+OBJFILES=$(CCFILES:.cc=.o)
+#LIBS=-L/usr/X11R6/lib -lglut -lGL 
+LIBS=-L./windows -lglut32 -lOPENGL32
+
+all: imagedb tester
+
+%.o: %.cc
+	$(CXX) $(CCFLAGS) -c $<
+
+tester.o: imagedb.h
+main.o: imagedb.h common.h
+io.o: common.h
+server.o: common.h
+
+imagedb: $(OBJFILES)
+	$(CXX) $(CCFLAGS) $(OBJFILES) -o imagedb $(LIBS) 
+
+tester: tester.o 
+	$(CXX) $(CCFLAGS) -o tester tester.o $(LIBS)
+
+clean:
+	rm -rf $(OBJFILES) tester.o imagedb.exe tester.exe

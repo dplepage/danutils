@@ -27,6 +27,36 @@ def cachedproperty(f):
     return property(getter)
 
 @contextmanager
+def replacedict(d,**kwargs):
+    """
+    Context Manager that replaces elements of a dictionary
+    and restores them upon completion.
+    example:
+    
+    >>> f = dict(x = 15)
+    >>> with replacedict(f, x = 12):
+    ...     print f
+    ... 
+    {'x': 12}
+    >>> print f
+    {'x': 15}
+    >>> with replacedict(f, x = None, y = 14):
+    ...     print f
+    ... 
+    {'y': 14, 'x': None}
+    >>> print f
+    {'x': 15}
+    """
+    class NO_ATTR: pass
+    old = dict([(k,d.get(k,NO_ATTR)) for k in kwargs.keys()])
+    d.update(kwargs)
+    yield d
+    for k in kwargs.keys():
+        if d[k] is NO_ATTR:
+            del d[k]
+        else: d[k] = old[k]
+
+@contextmanager
 def replacing(ob,**kwargs):
     """
     Context Manager that replaces parameters of an object
@@ -35,16 +65,22 @@ def replacing(ob,**kwargs):
     
     >>> class f: x = 15
     ... 
-    >>> with replacing(f,x=12):
+    >>> with replacing(f, x = 12):
     ...     print f.x
+    ... 
     12
     >>> print f.x
     15
+    >>> with replacing(f, x = None, y = 14):
+    ...     print f.x, f.y
+    ... 
+    None 14
+    >>> assert not hasattr(f,'y')
+    >>> print f.x
+    15
     """
-    old = dict([(k,ob.__dict__[k]) for k in kwargs.keys()])
-    ob.__dict__.update(kwargs)
-    yield ob
-    ob.__dict__.update(old)
+    with replacedict(ob.__dict__, **kwargs):
+        yield ob
 
 def batchby(iterable, size):
     c = count()
