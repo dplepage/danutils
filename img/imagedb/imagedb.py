@@ -19,6 +19,9 @@ byte_types = {
     np.int8 : "8",
     np.int16 : "16",
     np.int32 : "32",
+    np.uint8 : "8",
+    np.uint16 : "16",
+    np.uint32 : "32",
     np.float32 : "32f",
     np.float64 : "64f"
 }
@@ -44,7 +47,7 @@ def _ensure_imagedb():
                 raise IOError(msg)
     return imagedb_prog
 
-def imagedb(image, title = None, frame = None, fields = None, flip = 1):
+def imagedb(image, title = None, frame = None, fields = None, flip = 1, **kwargs):
     '''Wrapper around <http://www.cs.princeton.edu/~cdecoro/imagedb/>
     
     Options to imagedb are taken from the numpy.ndarray image.
@@ -58,6 +61,7 @@ def imagedb(image, title = None, frame = None, fields = None, flip = 1):
     f = fields if fields is not None else field_types[d]
     t = title if title is not None else "Untitled"
     fr = frame if frame is not None else ""
-    format_string = ("h={h} w={w} b={b} f={f} t={t} fr={fr} flip={flip} "
+    format_string = ("h={h} w={w} b={b} f={f} t='{t}' fr={fr} flip={flip} "
                      "pg={imagedb_prog}").format(**locals()) 
+    format_string += ["{0}={1}".format(k,v) for k,v in kwargs.iteritems()]
     imagedb_so.imagedb_wrap(image.copy().ctypes.data, format_string)
