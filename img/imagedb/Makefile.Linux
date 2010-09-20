@@ -4,6 +4,7 @@ CCFILES=main.cc server.cc io.cc
 OBJFILES=$(CCFILES:.cc=.o)
 LIBS=-L/usr/X11R6/lib -lglut -lGL 
 #LIBS=-lglut32 -lOPENGL32
+CC=g++
 
 all: imagedb tester
 

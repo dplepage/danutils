@@ -28,8 +28,13 @@ inline void ioctl(int s, int cmd, int* argp)
 
 
 extern "C" {
+#ifdef DARWIN
 #include <OpenGL/gl.h>
 #include <GLUT/glut.h>
+#else
+#include <GL/gl.h>
+#include <GL/glut.h>
+#endif
 }
 #include <sys/types.h>
 #include <sys/stat.h>
