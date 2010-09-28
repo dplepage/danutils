@@ -89,7 +89,6 @@ def hsv_to_rgb(hsv):
                         np.dstack([v, p, q]),
         )))))))
 
-
 def fresize(im,newshape):
     l = []
     h, w = newshape
@@ -97,3 +96,17 @@ def fresize(im,newshape):
         fim = Image.fromarray(im[:,:,plane],mode='F')
         l.append(np.asarray(fim.resize((w,h), Image.BICUBIC)))
     return np.dstack(l)
+
+def togray(im):
+    if im.ndim == 2 or im.shape[2] == 1:
+        return np.atleast_3d(im)[:,:,0]
+    return im.mean(axis=-1)
+
+def asciify(im, chars="#Wmg=-  "):
+    chars = list(chars)
+    nc = len(chars)
+    im = togray(im)
+    chars = np.array(chars)
+    indices = (im*(nc-.00001)).astype(int)
+    asciid = chars[indices]
+    return '\n'.join(''.join(row) for row in asciid)
