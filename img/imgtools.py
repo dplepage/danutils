@@ -102,7 +102,7 @@ def togray(im):
         return np.atleast_3d(im)[:,:,0]
     return im.mean(axis=-1)
 
-def asciify(im, chars="#Wmg=-  "):
+def asciify(im, chars="#Wmg=-. "):
     chars = list(chars)
     nc = len(chars)
     im = togray(im)
