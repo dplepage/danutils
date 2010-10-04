@@ -1,3 +1,4 @@
+import numpy as np
 
 def alignpair(a1,a2):
     s1 = a1.__str__().splitlines()
@@ -28,4 +29,19 @@ def debugCmp(a1, a2, shape = None):
         for i in range(a1.shape[0]):
             debugCmp(a1[i,:],a2[i,:])
     
+def assertCmp(a1, a2, shape = None):
+    if shape:
+        a1 = a1.reshape(shape)
+        a2 = a2.reshape(shape)
+    assert a1.shape == a2.shape, (
+        "Shape mismatch: {0} vs {1}".format(a1.shape, a2.shape))
+    nd = a1.ndim
+    if np.allclose(a1,a2): return
+    if nd <= 2:
+        print alignpair(a1,a2)
+    else:
+        for i in range(a1.shape[0]):
+            print alignpair(a1[i,:],a2[i,:])
+    assert False
     
+
