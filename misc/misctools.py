@@ -134,3 +134,7 @@ class dummy:
         for key,val in kwargs.iteritems():
             setattr(self, key, val)
 
+    def __repr__(self):
+        if hasattr(self, 'desc'):
+            return "<dummy: {0}>".format(self.desc)
+        return "<dummy: {0}>".format(hex(id(self)))
