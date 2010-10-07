@@ -42,6 +42,13 @@ def grayToHSVImg(M):
     """
     o = np.ones_like(M)
     return floatToImg(hsv_to_rgb(np.dstack([M,o,o])))
+    """                                      /  
+                                         (__) 
+                                         (oo) 
+                                   /------\/ 
+                                  / |    ||   
+                                 *  /\---/\ 
+                                    ~~   ~~"""
 
 def vis_gray(M):
     """
