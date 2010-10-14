@@ -5,7 +5,7 @@ from mappedarrayset import *
 
 from scipy.signal import convolve2d
 
-def dan_conv(a,b):
+def dan_conv(a,b, mode='full',boundary='fill',fillvalue=0, old_behavior=False):
     '''Does what convolve2d purports to do
     
     scipy.signal.convolve2d(a, b, mode='same', old_behavior=False) is supposed
@@ -19,18 +19,22 @@ def dan_conv(a,b):
     return an array the same shape as b.
     
     This function is a quick and dirty hack to solve this problem.
-    dan_conv(a,b) is equivalent to the expected behavior of
-    scipy.signal.convolve2d(a, b, mode='same', old_behavior=False)
+    dan_conv(a, b, mode, boundary, fillvalue, old_behavior) is equivalent to
+    scipy.signal.convolve2d(a, b, mode, boundary, fillvalue, old_behavior)
+    except that old_behavior defaults to False, and when it is and mode is
+    'same', the result will be the same size as a.
     
     This was written as of scipy 0.8.0; it is expected that as of 0.9 this bug
     will be rectified, and this function will become obsolete.
     '''
-    result = convolve2d(a,b,mode='full',old_behavior=False)
-    extra_h, extra_w = b.shape
-    h, w = result.shape
-    pad_lh = extra_h/2
-    pad_uh = h - (extra_h - pad_lh - 1)
-    pad_lw = extra_w/2
-    pad_uw = w - (extra_w - pad_lw - 1)
-    result = result[pad_lh:pad_uh, pad_lw:pad_uw].copy()
-    return result
+    if mode == 'same' and not old_behavior:
+        result = convolve2d(a,b,mode='full', boundary=boundary, fillvalue=fillvalue, old_behavior=False)
+        extra_h, extra_w = b.shape
+        h, w = result.shape
+        pad_lh = extra_h/2
+        pad_uh = h - (extra_h - pad_lh - 1)
+        pad_lw = extra_w/2
+        pad_uw = w - (extra_w - pad_lw - 1)
+        result = result[pad_lh:pad_uh, pad_lw:pad_uw].copy()
+        return result
+    return convolve2d(a, b, mode, boundary, fillvalue, old_behavior)
