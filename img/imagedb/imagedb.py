@@ -26,6 +26,11 @@ byte_types = {
     np.dtype("float64") : "64f"
 }
 
+rebyte_map = {
+    np.dtype('int64'): np.dtype('int32'),
+    np.dtype('bool'): np.dtype('float32'),
+}
+
 field_types = {
     1 : "l",
     2 : "la",
@@ -33,7 +38,33 @@ field_types = {
     4 : "rgba",
 }
 
+def imagedb_compatible(img):
+    """Coerce img to a type that imagedb knows how to handle.
+    
+    In particular, imagedb doesn't take bool or int64 arrays. This function
+    will also copy and reorder e.g. images with the wrong endianness.
+    """
+    if img.dtype == np.dtype('bool'):
+        return img.astype('uint8')*255
+    order = img.dtype.byteorder
+    kind = img.dtype.kind
+    bytes = img.dtype.itemsize
+    # force int arrays to unsigned
+    kind = {'i':'u'}.get(kind, kind)
+    # Can't handle int64 and up
+    if kind == 'i' and bytes > 4:
+        bytes = 4
+    # Also can't handle float128 and up
+    elif kind == 'f' and bytes > 8:
+        bytes = 8
+    new_str = '{order}{kind}{bytes}'.format(**locals())
+    if new_str == img.dtype.str:
+        return img # No change
+    return img.astype(new_str)
+    
+
 def _ensure_imagedb():
+    '''Compile imagedb if it's not already here '''
     imagedb_prog = os.path.join(here,'imagedb')
     if not os.path.exists(imagedb_prog):
         logger.info("imagedb executable is not present, making it")
@@ -50,10 +81,16 @@ def _ensure_imagedb():
 def imagedb(image, title = None, frame = None, fields = None, flip = 1, **kwargs):
     '''Wrapper around <http://www.cs.princeton.edu/~cdecoro/imagedb/>
     
-    Options to imagedb are taken from the numpy.ndarray image.
-    title - title to use
+    The following imagedb options are arguments to this function, with
+    sensible defaults:
+        title(t), frame(fr), fields(f), flip
+    The following options are harvested automatically from the image:
+        h, w, b
+    Other options can be passed as **kwargs to this function; see the imagedb
+    website at the URL above for the full list of options.
     '''
     imagedb_prog = _ensure_imagedb()
+    image = imagedb_compatible(image)
     h, w, d = np.atleast_3d(image).shape
     b = byte_types[image.dtype]
     f = fields if fields is not None else field_types[d]
