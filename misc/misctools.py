@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import copy
 from itertools import groupby, izip, count
 import warnings, os
 
@@ -138,3 +139,6 @@ class dummy:
         if hasattr(self, 'desc'):
             return "<dummy: {0}>".format(self.desc)
         return "<dummy: {0}>".format(hex(id(self)))
+    
+    def copy(self):
+        return copy.deepcopy(self)
