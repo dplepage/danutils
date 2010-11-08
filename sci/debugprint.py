@@ -21,13 +21,16 @@ def debugCmp(a1, a2, shape = None):
     if shape:
         a1 = a1.reshape(shape)
         a2 = a2.reshape(shape)
-    assert a1.shape == a2.shape
+    if np.allclose(a1,a2): return True
+    assert a1.shape == a2.shape, (
+        "Shape mismatch: {0} vs {1}".format(a1.shape, a2.shape))
     nd = a1.ndim
     if nd <= 2:
         print alignpair(a1,a2)
     else:
         for i in range(a1.shape[0]):
             debugCmp(a1[i,:],a2[i,:])
+    return False
     
 def assertCmp(a1, a2, shape = None):
     if shape:
