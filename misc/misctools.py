@@ -130,15 +130,28 @@ class memoize:
       self.memoized[(args,`kwargs`)] = self.function(*args,**kwargs)
       return self.memoized[(args,`kwargs`)]
 
-class dummy:
+class dummy(object):
     def __init__(self, **kwargs):
-        for key,val in kwargs.iteritems():
-            setattr(self, key, val)
-
+        self._dict = kwargs
+        
+    def __getattribute__(self, attr):
+        d = object.__getattribute__(self, '_dict')
+        if attr in d:
+            return d[attr]
+        return object.__getattribute__(self, attr)
+    
+    def __setattr__(self, attr, value):
+        if attr == '_dict':
+            object.__setattr__(self, '_dict', value)
+        else:
+            d = object.__getattribute__(self, '_dict')
+            d[attr] = value
+    
     def __repr__(self):
-        if hasattr(self, 'desc'):
+        try:
             return "<dummy: {0}>".format(self.desc)
-        return "<dummy: {0}>".format(hex(id(self)))
+        except:
+            return "<dummy at {0}>".format(hex(id(self)))
     
     def copy(self):
-        return copy.deepcopy(self)
+        return dummy(**self._dict)
