@@ -107,11 +107,25 @@ class MappedArraySet(object):
         self.store()
         return self[name]
     
-    def newArray(self, name, shape, dtype='float32'):
+    def newArray(self, name, shape, dtype='float32', overwrite=False):
         if self.readonly:
             raise IOError("Attempt to write to readonly MappedArraySet")
         if self.hasArray(name):
-            raise KeyError("Duplicate key: %s"%name)
+            if overwrite:
+                del self[name]
+            else:
+                raise KeyError("Duplicate key: %s"%name)
+        fname = self.toFileName(name)
+        mm = np.memmap(self._getf(fname), mode='w+', dtype=dtype, shape=shape)
+        self.manifest[name] = (fname, dtype, shape)
+        self._cache[name] = mm
+        self.store()
+        return mm
+
+    def getArray(self, name, shape, dtype='float32'):
+        if self.hasArray(name):
+            return self[name]
+        return self.newArray(name, shape, dtype)
         fname = self.toFileName(name)
         mm = np.memmap(self._getf(fname), mode='w+', dtype=dtype, shape=shape)
         self.manifest[name] = (fname, dtype, shape)
