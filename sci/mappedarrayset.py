@@ -1,4 +1,5 @@
 import os
+import os.path as pth
 
 import numpy as np
 import yaml
@@ -17,10 +18,10 @@ class MappedArraySet(object):
         arrays.
         '''
         super(MappedArraySet, self).__init__()
-        try:
+        if not path.exists(dirname):
+            if readonly:
+                raise IOError("Cannot create readonly MappedArraySet - no such directory: {0}".format(dirname))
             os.makedirs(dirname)
-        except OSError:
-            pass
         self.dirname = dirname
         self.readonly = readonly
         if os.path.exists(self._getf('manifest.yml')):
@@ -30,6 +31,8 @@ class MappedArraySet(object):
                     if not os.path.exists(self._getf(fname)):
                         del self.manifest[name]
         else:
+            if readonly:
+                raise IOError("Cannot create readonly MappedArraySet - directory is not MappedArraySet: {0}".format(dirname))
             self.manifest = {}
         self._cache = {}
     
@@ -122,13 +125,17 @@ class MappedArraySet(object):
         self.store()
         return mm
 
-    def getArray(self, name, shape, dtype='float32'):
+    def getArray(self, name, shape=None, dtype=None, overwrite=True):
         if self.hasArray(name):
+            arr = self[name]
+            if (shape is not None and arr.shape != shape) or (dtype is not None and arr.dtype != dtype):
+                if overwrite:
+                    if shape is None or dtype is None:
+                        raise ValueError("Array {0} already exists with different shape and/or dtype; you must provide both a shape and a dtype to overwrite it.".format(name))
+                    return self.newArray(name, shape, dtype, overwrite=True)
+                else:
+                    raise ValueError("Array {0} already exists with different shape and/or dtype".format(name))
             return self[name]
+        if shape is None or dtype is None:
+            raise KeyError("{0} (missing shape or dtype to create)".format(name))
         return self.newArray(name, shape, dtype)
-        fname = self.toFileName(name)
-        mm = np.memmap(self._getf(fname), mode='w+', dtype=dtype, shape=shape)
-        self.manifest[name] = (fname, dtype, shape)
-        self._cache[name] = mm
-        self.store()
-        return mm
