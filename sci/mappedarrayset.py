@@ -18,7 +18,7 @@ class MappedArraySet(object):
         arrays.
         '''
         super(MappedArraySet, self).__init__()
-        if not path.exists(dirname):
+        if not pth.exists(dirname):
             if readonly:
                 raise IOError("Cannot create readonly MappedArraySet - no such directory: {0}".format(dirname))
             os.makedirs(dirname)
