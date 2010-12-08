@@ -6,7 +6,7 @@ import yaml
 
 class MappedArraySet(object):
     """Wraps a collection of named arrays stored as memory-mapped files."""
-    def __init__(self, dirname, readonly=False):
+    def __init__(self, dirname, readonly=False, cached=True):
         '''Create or load a MappedArraySet in a given directory.
         
         This creates the directory (if it does not already exist), and either
@@ -16,6 +16,12 @@ class MappedArraySet(object):
         
         If readonly is set, no modifications can be made to the manifest or the 
         arrays.
+        
+        If cached is set, loaded memmap objects will be stored in a local
+        cache and returned upon request. Note that while this improves 
+        performance, it will also prevent numpy from automatically writing
+        changes to disk and releasing memory when user code releases the array,
+        because the MappedArraySet will still have a reference to it.
         '''
         super(MappedArraySet, self).__init__()
         if not pth.exists(dirname):
@@ -35,6 +41,7 @@ class MappedArraySet(object):
                 raise IOError("Cannot create readonly MappedArraySet - directory is not MappedArraySet: {0}".format(dirname))
             self.manifest = {}
         self._cache = {}
+        self.cached = cached
     
     def store(self):
         '''Update the manifest file'''
@@ -77,7 +84,8 @@ class MappedArraySet(object):
         if self.readonly:
             mode = 'r'
         mm = np.memmap(self._getf(fname), mode=mode, dtype=dtype, shape=shape)
-        self._cache[name] = mm
+        if self.cached:
+            self._cache[name] = mm
         return mm
     
     @staticmethod
@@ -121,7 +129,8 @@ class MappedArraySet(object):
         fname = self.toFileName(name)
         mm = np.memmap(self._getf(fname), mode='w+', dtype=dtype, shape=shape)
         self.manifest[name] = (fname, dtype, shape)
-        self._cache[name] = mm
+        if self.cached:
+            self._cache[name] = mm
         self.store()
         return mm
 
