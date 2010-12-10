@@ -47,7 +47,8 @@ class MappedArraySet(object):
         '''Update the manifest file'''
         if self.readonly:
             raise IOError("Attempt to write to readonly MappedArraySet")
-        open(self._getf('manifest.yml'), 'w').write(yaml.dump(self.manifest))
+        mantext = yaml.dump(self.manifest)
+        open(self._getf('manifest.yml'), 'w').write(mantext)
     
     def flush(self):
         '''Force all open arrays to write back'''
