@@ -128,8 +128,9 @@ class MappedArraySet(object):
             else:
                 raise KeyError("Duplicate key: %s"%name)
         fname = self.toFileName(name)
+        dtype = np.dtype(dtype)
         mm = np.memmap(self._getf(fname), mode='w+', dtype=dtype, shape=shape)
-        self.manifest[name] = (fname, dtype, shape)
+        self.manifest[name] = (fname, dtype.name, shape)
         if self.cached:
             self._cache[name] = mm
         self.store()
