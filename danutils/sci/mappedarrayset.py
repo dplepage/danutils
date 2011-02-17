@@ -1,5 +1,6 @@
 import os
 import os.path as pth
+import shutil
 
 import numpy as np
 import yaml
@@ -150,3 +151,16 @@ class MappedArraySet(object):
         if shape is None or dtype is None:
             raise KeyError("{0} (missing shape or dtype to create)".format(name))
         return self.newArray(name, shape, dtype)
+    
+    def copyFrom(self, othermas, otherarr, arrname=None):
+        if arrname is None:
+            arrname = otherarr
+        name, dtype, shape = othermas.manifest[otherarr]
+        new_name = self.toFileName(arrname)
+        new_file = self._getf(new_name)
+        old_file = othermas._getf(name)
+        print "copy {0} to {1}".format(old_file, new_file)
+        shutil.copy(old_file, new_file)
+        self.manifest[arrname] = (new_name, dtype, shape)
+        self.store()
+    

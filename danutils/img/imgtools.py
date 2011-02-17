@@ -6,7 +6,7 @@ import numpy as np
 
 from danutils.misc import batchby
 
-def imread(fname, mode='RGB'):
+def imread(fname, mode='RGBA'):
     return np.asarray(Image.open(fname).convert(mode))/255.0
 
 def floatToImg(M):

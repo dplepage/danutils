@@ -3,6 +3,6 @@ sci/ValDer/build/*
 *.so
 *.o
 .DS_Store
-sci/ValDer/ValDer.cpp
-img/imagedb/imagedb
-img/imagedb/tester
+danutils/sci/ValDer/ValDer.cpp
+danutils/img/imagedb/imagedb
+danutils/img/imagedb/tester
