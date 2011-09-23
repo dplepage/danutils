@@ -450,7 +450,7 @@ def valder_var(vv):
     """
     cdef int nv,i
     cdef ValDer vd
-    va = numpy.asarray(vv)
+    va = numpy.hstack(vv)
     v = va.flat
     nv = len(v)
     ans = nv*[None]
