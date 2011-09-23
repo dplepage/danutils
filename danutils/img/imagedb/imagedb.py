@@ -105,3 +105,8 @@ def imagedb(image, title = None, frame = None, fields = None, flip = 1, **kwargs
     x = np.ascontiguousarray(image)
     imagedb_so.imagedb_wrap(x.ctypes.data, format_string)
     return x
+
+if __name__ == '__main__':
+    import os
+    here = os.path.dirname(__file__)
+    os.system(here+'/imagedb')
