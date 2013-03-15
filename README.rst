@@ -43,9 +43,8 @@ other libraries have made this ENTIRELY OBSOLETE.
 
 Looks like a bunch of image manipulation functions that are probably already
 provided by some library or other. Also includes a python wrapper around
-`Christopher de Coro's image debugger`_
+`Christopher de Coro's image debugger <http://www.cs.princeton.edu/~cdecoro/imagedb/>`_
 
-_: http://www.cs.princeton.edu/~cdecoro/imagedb/
 
 ``danutils.lib``
 ================
@@ -57,7 +56,7 @@ Automatically compile really simple c projects and then import them via ctypes.
 
 From one time when I was playing around with the Panda3D_ game engine.
 
-_: http://www.panda3d.org/
+.. _Panda3d: http://www.panda3d.org/
 
 ``danutils.sci``
 ================
